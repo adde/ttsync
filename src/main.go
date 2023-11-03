@@ -96,9 +96,8 @@ func main() {
 
 func getTimeEntries() []TimeEntry {
 	fromStr := os.Getenv("FROM")
-	timestamp := convertDatetoUnix(fromStr)
 
-	data := fetchToggl(togglApiBaseURL + "/me/time_entries?since=" + timestamp)
+	data := fetchToggl(togglApiBaseURL + "/me/time_entries?end_date=2030-01-01&start_date=" + fromStr)
 	fmt.Println("Fetching time entries since " + fromStr + "...")
 
 	var timeEntries []TimeEntry
