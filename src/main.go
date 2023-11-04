@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io"
 	"log"
@@ -82,7 +83,14 @@ const (
 	configDir             = "/.config/ttsync"
 )
 
+var startDate string
+var endDate string
+var outputFileName string
+
 func main() {
+	// Load CLI arguments
+	loadAppArgs()
+
 	// Construct the full path to the .env file
 	envFilePath := getCurrentUserHomeDir() + configDir + "/.env"
 
@@ -108,10 +116,8 @@ func main() {
 }
 
 func getTimeEntries() []TimeEntry {
-	fromStr := os.Getenv("FROM")
-
-	data := fetchToggl(togglApiBaseURL + "/me/time_entries?end_date=2030-01-01&start_date=" + fromStr)
-	fmt.Println("Fetching time entries since " + fromStr + "...")
+	data := fetchToggl(togglApiBaseURL + "/me/time_entries?end_date=" + endDate + "&start_date=" + startDate)
+	fmt.Println("Fetching time entries between " + startDate + " and " + endDate + "...")
 
 	var timeEntries []TimeEntry
 	err := json.Unmarshal([]byte(data), &timeEntries)
@@ -234,6 +240,35 @@ func getCurrentUserHomeDir() string {
 	}
 
 	return currentUser.HomeDir
+}
+
+func loadAppArgs() {
+	// Define command-line flags
+	flag.StringVar(&startDate, "start", getPrevousMonday(), "The start date from which we should fetch time entries")
+	flag.StringVar(&startDate, "s", getPrevousMonday(), "Alias for start date")
+	flag.StringVar(&endDate, "end", "2100-01-01", "The end date from which we should fetch time entries")
+	flag.StringVar(&endDate, "e", "2100-01-01", "Alias for end date")
+	flag.StringVar(&outputFileName, "output", defaultOutputFileName, "The output path where the CSV file should be saved")
+	flag.StringVar(&outputFileName, "o", defaultOutputFileName, "Alias for output path")
+
+	// Parse the command-line arguments
+	flag.Parse()
+}
+
+func getPrevousMonday() string {
+	// Get the current date
+	today := time.Now()
+
+	// Calculate the number of days to subtract to reach the previous Monday
+	daysToSubtract := int(today.Weekday() - time.Monday)
+	if daysToSubtract < 0 {
+		daysToSubtract += 7 // Wrap around to the previous week
+	}
+
+	// Calculate the date of the previous Monday
+	previousMonday := today.AddDate(0, 0, -daysToSubtract)
+
+	return previousMonday.Format("2006-01-02")
 }
 
 func convertDatetoUnix(dateStr string) string {
