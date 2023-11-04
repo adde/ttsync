@@ -1,14 +1,17 @@
 # Toggl Tidig Sync
 
-Fetch time entries from Toggl(API) and write the data to a CSV file that can be imported in Tidig without any need of manual adjustments.
+_Toggl Tidig Sync_ is a CLI tool that fetches time entries from __Toggl__(REST API) and writes them to a CSV file in a format that can be imported in __Tidig__ without having to do any manual adjustments.
 
 ## Prerequisites
 
 You need to have the exact same namings of clients and projects in Toggl as in Tidig for this import to work seamlessly.
 
-Also if you want to get correct activities in the import, you need to use tags in Toggl with the same activity names as in Tidig.
+Also if you want to get correct activities in the import, you need to use tags in Toggl that matches activity names in Tidig.
 
-To make use of the ticket number field, you can separate your descriptions in Toggl with a pipe(|). The part before the pipe will be used as the ticket number and the part after will be used as the description.
+To make use of the ticket number field, you can separate your descriptions in Toggl with a pipe(|). The part before the pipe will be used as the ticket number and the part after will be used as the description. Example desciption with a ticket number:
+```
+PROJ-123 | Did some work
+```
 
 ## Installation
 
@@ -26,22 +29,33 @@ Replace `USERNAME` and `PASSWORD` placeholders with your own Toggl credentials. 
 
 To run the app from source, run the following command in the root of the project:
 ```sh
-go run ./src
+go run src
 ```
 
 ## Build
 
-To build an executable from source, run the following command:
+To build executables from source, run the following command:
 ```sh
-go build ./src/main.go
+make build
 ```
+This will create executables for all platforms in the `bin` directory.
 
 Then move the binary to a folder in your path, for example:
 ```sh
-mv main /usr/local/bin/ttsync
+mv ./bin/ttsync-linux-amd64 /usr/local/bin/ttsync
 ```
 and then run the app:
 ```sh
 ttsync
 ```
-(you will still need the `.env` file in your working directory)
+(you will still need the `.env` file in your working directory when running the app)
+
+## Download
+
+Alternatively, you can download the latest version of the app from the [release section](https://github.com/adde/toggl-tidig-sync/releases) in this repo.
+
+## Changelog
+
+### v1.0.0 (2023-11-03)
+
+* First release.
