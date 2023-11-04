@@ -1,2 +1,8 @@
+# Build directory
+/bin
+
+# Environment files
 .env
+
+# Output files
 *.csv
