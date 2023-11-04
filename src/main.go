@@ -76,7 +76,7 @@ type Client struct {
 
 const (
 	togglApiBaseURL = "https://api.track.toggl.com/api/v9"
-	fileName        = "time-entries.csv"
+	outputFileName  = "time-entries.csv"
 	defaultActivity = "Programmering"
 )
 
@@ -167,7 +167,7 @@ func fetchToggl(url string) string {
 
 func createCsv(timeEntries []TimeEntry) {
 	// Create a new CSV file
-	file, err := os.Create(fileName)
+	file, err := os.Create(outputFileName)
 	if err != nil {
 		panic(err)
 	}
@@ -203,7 +203,7 @@ func createCsv(timeEntries []TimeEntry) {
 		}
 	}
 
-	fmt.Println("Writing to file time-entries.csv...")
+	fmt.Println("Writing to file " + outputFileName + "...")
 }
 
 func convertDatetoUnix(dateStr string) string {
