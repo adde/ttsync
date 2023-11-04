@@ -9,6 +9,7 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"os/user"
 	"strconv"
 	"strings"
 	"time"
@@ -75,16 +76,26 @@ type Client struct {
 }
 
 const (
-	togglApiBaseURL = "https://api.track.toggl.com/api/v9"
-	outputFileName  = "time-entries.csv"
-	defaultActivity = "Programmering"
+	togglApiBaseURL       = "https://api.track.toggl.com/api/v9"
+	defaultOutputFileName = "time-entries.csv"
+	defaultActivity       = "Programmering"
+	configDir             = "/.config/ttsync"
 )
 
 func main() {
+	// Construct the full path to the .env file
+	envFilePath := getCurrentUserHomeDir() + configDir + "/.env"
+
 	// Load env file
-	err := godotenv.Load()
+	err := godotenv.Load(envFilePath)
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Printf("Error %s\n", err)
+		fmt.Println("Trying to load local .env instead...")
+
+		err = godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading local .env")
+		}
 	}
 
 	// Get time entries from Toggl
@@ -213,6 +224,16 @@ func createCsv(timeEntries []TimeEntry) {
 	}
 
 	fmt.Println("Writing to file " + outputFileName + "...")
+}
+
+func getCurrentUserHomeDir() string {
+	// Get the current user
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Fatal("Could not find current users home directory")
+	}
+
+	return currentUser.HomeDir
 }
 
 func convertDatetoUnix(dateStr string) string {
