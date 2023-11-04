@@ -87,8 +87,10 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
+	// Get time entries from Toggl
 	timeEntries := getTimeEntries()
 
+	// Format and write time entries to a .csv file
 	createCsv(timeEntries)
 
 	fmt.Println("Done!")
@@ -140,26 +142,30 @@ func fetchToggl(url string) string {
 	user := os.Getenv("USERNAME")
 	pass := os.Getenv("PASSWORD")
 
-	// Fetch time entries from Toggl
-	req, err := http.NewRequest(http.MethodGet,
-		url, nil)
+	if user == "" || pass == "" {
+		log.Fatal("Username or password variables are empty or does not exist in the supplied .env file")
+	}
+
+	// Create request object
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		print(err)
+		log.Fatal(err)
 	}
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	req.SetBasicAuth(user, pass)
 
+	// Make request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		print(err)
+		log.Fatal(err)
 	}
 
 	// Get the response body
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		print(err)
+		log.Fatal(err)
 	}
 
 	return string(body)
@@ -178,7 +184,9 @@ func createCsv(timeEntries []TimeEntry) {
 	defer writer.Flush()
 
 	// Define the header row
-	header := []string{"Datum", "Artikel", "Tid (timmar)", "Kund", "Projekt", "Aktivitet", "Ärendenummer", "Beskrivning"}
+	header := []string{
+		"Datum", "Artikel", "Tid (timmar)",
+		"Kund", "Projekt", "Aktivitet", "Ärendenummer", "Beskrivning"}
 
 	// Write the header row to the CSV file
 	if err := writer.Write(header); err != nil {
@@ -197,6 +205,7 @@ func createCsv(timeEntries []TimeEntry) {
 		if project.ClientID != 0 {
 			client := getClient(record.WorkspaceID, project.ClientID)
 			data := []string{date, "Normal", duration, client.Name, project.Name, activity, ticketNumber, description}
+
 			if err := writer.Write(data); err != nil {
 				panic(err)
 			}
