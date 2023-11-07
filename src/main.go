@@ -286,9 +286,14 @@ func getDate(date time.Time) string {
 }
 
 func getDuration(duration int) string {
-	rounded := math.Round(float64(duration) / 60 / 60)
+	hours := float64(duration) / 3600.0
+	roundedHours := math.Ceil(hours*2) / 2
 
-	return strconv.Itoa(int(rounded))
+	// If roundedHours is an integer, return it as is, otherwise format to one decimal point
+	if roundedHours == math.Floor(roundedHours) {
+		return fmt.Sprintf("%.0f", roundedHours)
+	}
+	return fmt.Sprintf("%.1f", roundedHours)
 }
 
 func getActivity(tags []string) string {
