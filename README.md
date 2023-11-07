@@ -8,7 +8,7 @@ You need to have the exact same namings of clients and projects in Toggl as in T
 
 Also if you want to get correct activities in the import, you need to use tags in Toggl that matches activity names in Tidig.
 
-To make use of the ticket number field, you can separate your descriptions in Toggl with a pipe(|). The part before the pipe will be used as the ticket number and the part after will be used as the description. Example desciption with a ticket number:
+To make use of the ticket number field, you can separate your descriptions in Toggl with a pipe(|). The part before the pipe will be used as the ticket number and the part after will be used as the description. Example description with a ticket number:
 ```
 PROJ-123 | Did some work
 ```
