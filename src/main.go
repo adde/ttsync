@@ -77,6 +77,7 @@ type Client struct {
 }
 
 const (
+	currentAppVersion     = "v1.2.1"
 	togglApiBaseURL       = "https://api.track.toggl.com/api/v9"
 	defaultOutputFileName = "time-entries.csv"
 	defaultActivity       = "Programmering"
@@ -86,10 +87,17 @@ const (
 var startDate string
 var endDate string
 var outputFileName string
+var showVersion bool
 
 func main() {
 	// Load CLI arguments
 	loadAppArgs()
+
+	// Display current version
+	if showVersion {
+		fmt.Println(currentAppVersion)
+		return
+	}
 
 	// Construct the full path to the .env file
 	envFilePath := getCurrentUserHomeDir() + configDir + "/.env"
@@ -250,6 +258,8 @@ func loadAppArgs() {
 	flag.StringVar(&endDate, "e", "2100-01-01", "Alias for end date")
 	flag.StringVar(&outputFileName, "output", defaultOutputFileName, "The output path where the CSV file should be saved")
 	flag.StringVar(&outputFileName, "o", defaultOutputFileName, "Alias for output path")
+	flag.BoolVar(&showVersion, "version", false, "If the user wants to display the current version")
+	flag.BoolVar(&showVersion, "v", false, "Alias for current version")
 
 	// Parse the command-line arguments
 	flag.Parse()
