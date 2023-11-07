@@ -15,6 +15,39 @@ PROJ-123 | Did some work
 
 ## Installation
 
+If you don't want to run or build the app from source, you can download the latest version of the app from the [release section](https://github.com/adde/toggl-tidig-sync/releases/latest) of this repo.
+
+On Mac or Linux you can run the following commands in a terminal to download and install the latest version:
+
+### Mac OS
+
+```sh
+curl -LO https://github.com/adde/toggl-tidig-sync/releases/latest/download/ttsync-darwin-arm64
+
+chmod +x ./ttsync-darwin-arm64
+
+mv ./ttsync-darwin-arm64 /usr/local/bin/ttsync
+```
+
+### Linux
+
+```sh
+curl -LO https://github.com/adde/toggl-tidig-sync/releases/latest/download/ttsync-linux-amd64
+
+chmod +x ./ttsync-linux-amd64
+
+mv ./ttsync-linux-amd64 /usr/local/bin/ttsync
+```
+
+### Run
+
+Then run the app with the following command(see the [Usage](#user-content-usage) and [Arguments](#user-content-arguments) sections below for more information):
+```sh
+ttsync
+```
+
+## Development
+
 Make sure you have _go_ installed on your machine. Verify by running the following command in a terminal:
 ```sh
 go version
@@ -27,7 +60,7 @@ which make
 ```
 It should return something like this: `/usr/bin/make`. Otherwise you need to install make:
 ```sh
-# MacOS
+# Mac OS
 brew install make
 
 # Ubuntu / WSL
@@ -38,20 +71,18 @@ sudo apt install make
 
 ### Environment variables
 
-#### Alternative 1 (development)
+#### Alternative 1 (live)
+
+If you downloaded an executable from Github(or built one from source), you need to create a new `.env` file in your home directory:
+```sh
+touch ~/.config/ttsync/.env
+```
+Edit the file and add the `USERNAME` and `PASSWORD` variables. Set your Toggl credentials as values.
+
+#### Alternative 2 (development)
 
 If you are only running the app from source, it is enough to just keep a `.env` file in your working directory. Create a copy of `.env.example` and save it to `.env`.
 
-Replace `USERNAME` and `PASSWORD` placeholders with your own Toggl credentials.
-
-#### Alternative 2 (production)
-
-If you are planning on running the app from an executable, then you may want to create a permanent `.env` file in your home config directory:
-
-Create a copy of `.env.example` and save it to `~/.config/ttsync/.env`.
-```sh
-cp .env.example ~/.config/ttsync/.env
-```
 Replace `USERNAME` and `PASSWORD` placeholders with your own Toggl credentials.
 
 ### Run
@@ -107,7 +138,3 @@ The output file path is used to write the CSV file. (Default: time-entries.csv)
 ttsync -output entries.csv
 ttsync -o entries.csv
 ```
-
-## Download
-
-If you don't want to run or build the app from source, you can download the latest version of the app from the [release section](https://github.com/adde/toggl-tidig-sync/releases) in this repo.
