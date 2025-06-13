@@ -77,7 +77,7 @@ type Client struct {
 }
 
 const (
-	currentAppVersion     = "v1.2.1"
+	currentAppVersion     = "v1.2.2"
 	togglApiBaseURL       = "https://api.track.toggl.com/api/v9"
 	defaultOutputFileName = "time-entries.csv"
 	defaultActivity       = "Programmering"
@@ -124,14 +124,18 @@ func main() {
 }
 
 func getTimeEntries() []TimeEntry {
-	data := fetchToggl(togglApiBaseURL + "/me/time_entries?end_date=" + endDate + "&start_date=" + startDate)
+	url := togglApiBaseURL + "/me/time_entries?end_date=" + endDate + "&start_date=" + startDate
+	data := fetchToggl(url)
 	fmt.Println("Fetching time entries between " + startDate + " and " + endDate + "...")
 
 	var timeEntries []TimeEntry
 	err := json.Unmarshal([]byte(data), &timeEntries)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("URL: ", url)
+		log.Fatal("Failed time entry fetch: ", err)
 	}
+
+	time.Sleep(100 * time.Millisecond)
 
 	return timeEntries
 }
@@ -143,8 +147,11 @@ func getProject(workspaceId int, projectId int) Project {
 	var project Project
 	err := json.Unmarshal([]byte(data), &project)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("URL: ", url)
+		log.Fatal("Failed project fetch: ", err)
 	}
+
+	time.Sleep(100 * time.Millisecond)
 
 	return project
 }
@@ -156,8 +163,11 @@ func getClient(workspaceId int, clientId int) Client {
 	var client Client
 	err := json.Unmarshal([]byte(data), &client)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("URL: ", url)
+		log.Fatal("Failed client fetch: ", err)
 	}
+
+	time.Sleep(100 * time.Millisecond)
 
 	return client
 }
