@@ -291,16 +291,6 @@ func getPrevousMonday() string {
 	return previousMonday.Format("2006-01-02")
 }
 
-func convertDatetoUnix(dateStr string) string {
-	parsedDate, err := time.Parse("2006-01-02", dateStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	unixTimestamp := parsedDate.Unix()
-	return strconv.FormatInt(unixTimestamp, 10)
-}
-
 func getDate(date time.Time) string {
 	return date.Format("2006-01-02")
 }
