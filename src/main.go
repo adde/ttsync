@@ -89,6 +89,10 @@ var endDate string
 var outputFileName string
 var showVersion bool
 
+var fetchCounter = 0
+var projectsCache = make(map[int]Project)
+var clientsCache = make(map[int]Client)
+
 func main() {
 	// Load CLI arguments
 	loadAppArgs()
@@ -120,6 +124,7 @@ func main() {
 	// Format and write time entries to a .csv file
 	createCsv(timeEntries)
 
+	fmt.Println("Requests made to the Toggl API:", fetchCounter)
 	fmt.Println("Done!")
 }
 
@@ -135,12 +140,16 @@ func getTimeEntries() []TimeEntry {
 		log.Fatal("Failed time entry fetch: ", err)
 	}
 
-	time.Sleep(100 * time.Millisecond)
-
 	return timeEntries
 }
 
 func getProject(workspaceId int, projectId int) Project {
+	// Check if the project is already cached
+	if project, exists := projectsCache[projectId]; exists {
+		return project
+	}
+
+	// If not cached, fetch the project from the API
 	url := togglApiBaseURL + "/workspaces/" + strconv.Itoa(workspaceId) + "/projects/" + strconv.Itoa(projectId)
 	data := fetchToggl(url)
 
@@ -151,12 +160,19 @@ func getProject(workspaceId int, projectId int) Project {
 		log.Fatal("Failed project fetch: ", err)
 	}
 
-	time.Sleep(100 * time.Millisecond)
+	// Cache the project for future use
+	projectsCache[projectId] = project
 
 	return project
 }
 
 func getClient(workspaceId int, clientId int) Client {
+	// Check if the client is already cached
+	if client, exists := clientsCache[clientId]; exists {
+		return client
+	}
+
+	// If not cached, fetch the client from the API
 	url := togglApiBaseURL + "/workspaces/" + strconv.Itoa(workspaceId) + "/clients/" + strconv.Itoa(clientId)
 	data := fetchToggl(url)
 
@@ -167,7 +183,8 @@ func getClient(workspaceId int, clientId int) Client {
 		log.Fatal("Failed client fetch: ", err)
 	}
 
-	time.Sleep(100 * time.Millisecond)
+	// Cache the client for future use
+	clientsCache[clientId] = client
 
 	return client
 }
@@ -202,6 +219,9 @@ func fetchToggl(url string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fetchCounter++
+	time.Sleep(100 * time.Millisecond)
 
 	return string(body)
 }
