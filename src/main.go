@@ -77,7 +77,7 @@ type Client struct {
 }
 
 const (
-	currentAppVersion     = "v1.2.2"
+	currentAppVersion     = "v1.3.1"
 	togglApiBaseURL       = "https://api.track.toggl.com/api/v9"
 	defaultOutputFileName = "time-entries.csv"
 	defaultActivity       = "Programmering"
